@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { BriefsController } from './briefs.controller';
 import { BriefsService } from './briefs.service';
-import { Brief } from './entities/brief.entity';
+import { Brief, BriefSchema } from './schemas/brief.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Brief])],
+  imports: [MongooseModule.forFeature([{ name: Brief.name, schema: BriefSchema }])],
   controllers: [BriefsController],
   providers: [BriefsService],
   exports: [BriefsService],

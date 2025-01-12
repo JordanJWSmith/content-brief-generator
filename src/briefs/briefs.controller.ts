@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { BriefsService } from './briefs.service';
 import { GenerateBriefDto } from './dto/generate-brief.dto';
-import { Brief } from './entities/brief.entity';
+import { Brief } from './schemas/brief.schema';
 
 @Controller('briefs')
 export class BriefsController {
@@ -10,6 +10,11 @@ export class BriefsController {
   @Post()
   async create(@Body() generateBriefDto: GenerateBriefDto): Promise<Brief> {
     return this.briefsService.create(generateBriefDto);
+  }
+
+  @Get(':userId')
+  async findByUserId(@Param('userId') userId: string): Promise<Brief[]> {
+    return this.briefsService.findByUserId(userId);
   }
 
   @Get()

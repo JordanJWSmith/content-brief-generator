@@ -1,22 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Brief } from './entities/brief.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Brief, BriefDocument } from './schemas/brief.schema';
 import { GenerateBriefDto } from './dto/generate-brief.dto';
 
 @Injectable()
 export class BriefsService {
   constructor(
-    @InjectRepository(Brief)
-    private readonly briefRepository: Repository<Brief>,
+    @InjectModel(Brief.name) private readonly briefModel: Model<BriefDocument>,
   ) {}
 
   async create(generateBriefDto: GenerateBriefDto): Promise<Brief> {
-    const brief = this.briefRepository.create(generateBriefDto);
-    return this.briefRepository.save(brief);
+    const createdBrief = new this.briefModel(generateBriefDto);
+    return createdBrief.save();
   }
 
   async findAll(): Promise<Brief[]> {
-    return this.briefRepository.find();
+    return this.briefModel.find().exec();
+  }
+
+  async findByUserId(userId: string): Promise<Brief[]> {
+    return this.briefModel.find({ userId }).exec();
   }
 }
