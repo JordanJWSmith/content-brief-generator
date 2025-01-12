@@ -15,7 +15,14 @@
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,  // Add this to support JSON imports
+    "esModuleInterop": true,   // Add this for better compatibility with CommonJS
+    "paths": {
+      "*": ["node_modules/*", "src/*"] // Add "src/*" to resolve imports from the `src` folder
+    }
+  },
+  "include": ["src/**/*"],      // Ensure all `src` files are included
+  "exclude": ["node_modules"]   // Explicitly exclude node_modules for clarity
 }
