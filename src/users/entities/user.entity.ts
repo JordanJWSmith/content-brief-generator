@@ -9,7 +9,7 @@ export class User {
   email: string;
 
   @Column()
-  password: string;
+  password: string; // Store hashed passwords
 
   @Column({ default: 'freemium' })
   subscription: string;

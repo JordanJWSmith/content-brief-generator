@@ -207,8 +207,6 @@ For serious marketers, agencies, or businesses that require deeper insights and 
 - Personalized onboarding for Pro-tier customers.
 
 
-# technical architecture
-
 # Technical Architecture
 
 ## High-Level Overview
