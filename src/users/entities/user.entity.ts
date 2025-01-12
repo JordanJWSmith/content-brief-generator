@@ -5,11 +5,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true }) // Add unique constraint
   email: string;
 
   @Column()
-  password: string; // Store hashed passwords
+  password: string;
 
   @Column({ default: 'freemium' })
   subscription: string;

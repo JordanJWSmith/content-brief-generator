@@ -1,0 +1,2 @@
+conect to psql:
+psql -U <username> -d brief_generator

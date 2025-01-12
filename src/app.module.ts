@@ -26,6 +26,7 @@ import { AuthModule } from './auth/auth.module';
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true,
         synchronize: true, // Turn off in production
+        logging: true, 
       }),
       inject: [ConfigService],
     }),
@@ -38,7 +39,6 @@ import { AuthModule } from './auth/auth.module';
       }),
       inject: [ConfigService],
     }),
-
     UsersModule,
     BriefsModule,
     SubscriptionsModule,
