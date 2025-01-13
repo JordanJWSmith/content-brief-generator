@@ -1,3 +1,7 @@
+# custom
+/config/google-nlp-key.json
+
+
 # compiled output
 /dist
 /node_modules
