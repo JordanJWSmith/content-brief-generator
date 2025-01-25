@@ -1,104 +1,335 @@
 {
     "competitors": [
       {
-        "title": "Think with Google - Discover Marketing Research & Digital Trends",
-        "link": "https://www.google.com/think",
-        "snippet": "In-Depth Reading · Focus on Canada · Big Thinkers · Back to Basics · AI in Marketing · Inclusive Marketing · Video Library · Marketing on YouTube · Creativity.",
+        "title": "AI in Marketing | IBM",
+        "link": "https://www.ibm.com/think/topics/ai-in-marketing",
+        "snippet": "Sep 6, 2023 ... AI marketing is the process of using AI capabilities like data collection, data-driven analysis, natural language processing (NLP) and machine learning (ML) to ...",
         "headings": [
-          "Consumer Insights",
-          "...", 
-          "Tools"
+          "AI in marketing: How to leverage this powerful new technology for your next campaign?",
+          "",
+          "What is AI marketing?",
+          "AI in marketing use cases",
+          "The benefits and challenges of using AI in marketing",
+          "Benefits",
+          "Challenges",
+          "A step-by-step guide to incorporating AI into your marketing strategy",
+          "Step 1: Establish goals",
+          "Step 2: Acquire the right talent",
+          "Step 3: Adhere to data privacy laws",
+          "Step 4: Test the quality of data",
+          "Step 5: Choose the solution that’s right for you",
+          "AI marketing solutions",
+          "Author",
+          "Resources"
         ],
-        "wordCount": 866
+        "wordCount": 4319
       },
       {
-        "title": "All In - Inclusive Marketing Insights",
-        "link": "https://google.com/all-in",
-        "snippet": "How an AI experiment put Pixel fans in the driver's seat AI for marketing: from hype to how Advertising is still a force for LGBTQ+ equity. Here's why.",
+        "title": "How to Design an AI Marketing Strategy",
+        "link": "https://hbr.org/2021/07/how-to-design-an-ai-marketing-strategy",
+        "snippet": "Marketing's core activities are understanding customer needs, matching them to products and services, and persuading people to buy—capabilities that AI can ...",
         "headings": [
-          "Teams",
-          "...",
-          "Audiences"
+          "Explore HBR",
+          "Popular Topics",
+          "For Subscribers",
+          "My Account",
+          "How to Design an AI Marketing Strategy",
+          "Summary.",
+          "Partner Center"
         ],
-        "wordCount": 939
+        "wordCount": 1262
       },
       {
-        "title": "AI Global Demand Manager, Applied AI, Google Cloud — Google ...",
-        "link": "https://www.google.com/about/careers/applications/jobs/results/75789235407200966-ai-global-demand-manager-applied-ai-google-cloud?.&page=90",
-        "snippet": "Experience with AI in marketing as a tool for innovation, automation, and creativity. Experience with bringing new innovations to market. Ability to keep up ...",
+        "title": "What is AI Marketing? A Complete Guide | Marketing Evolution",
+        "link": "https://www.marketingevolution.com/marketing-essentials/ai-markeitng",
+        "snippet": "Jul 20, 2022 ... AI marketing uses artificial intelligence technologies to make automated decisions based on data collection, data analysis, and additional ...",
         "headings": [
-          "job details",
-          "...",
-          "Equal opportunity"
+          "What is AI Marketing? A Complete Guide",
+          "What is AI (Artificial Intelligence) Marketing?",
+          "AI Marketing Use Cases Include:",
+          "What Are the Types of AI Marketing Solutions?",
+          "Machine Learning",
+          "Big Data and Analytics",
+          "AI Marketing Platforms & Tools",
+          "What Are the Challenges for AI Marketing?",
+          "Training Time and Data Quality",
+          "Privacy",
+          "Getting Buy-In",
+          "Deployment Best Practices",
+          "Adapting to a Changing Marketing Landscape",
+          "What Are the Pitfalls of AI in Marketing?",
+          "Legacy Models with Flawed Data and Tech Limitations",
+          "Lack of Transparency and Interpretability",
+          "Ethical Concerns and Bias",
+          "Overreliance on AI without Human Expertise",
+          "Data Privacy and Security Risks",
+          "Access to Proprietary Data",
+          "How to Use and Leverage AI in Marketing Campaigns",
+          "Establish Goals",
+          "Data Privacy Standards",
+          "Data Quantity and Sources",
+          "Acquire Data Science Talent",
+          "Maintain Data Quality",
+          "Create an Integrated AI Marketing Strategy",
+          "How to Select Selecting an AI Marketing Platform",
+          "What Are the Benefits of Leveraging AI in Marketing?",
+          "Increased Campaign ROI",
+          "Better Customer Relationships & Real-Time Personalization",
+          "Enhanced Marketing Measurement",
+          "Make Decisions Faster",
+          "What Are the Examples of AI in Marketing?",
+          "1. Bidding on Programmatic Media Buys",
+          "2. Select the Right Message",
+          "3. Granular Personalization",
+          "4. Chatbots and Conversational Experiences",
+          "5. Predictive Marketing Analytics",
+          "6. Marketing Operations",
+          "7. Dynamic Pricing",
+          "What are the Generative AI Marketing Predictions and Trends?",
+          "ChatGPT is Just the Beginning",
+          "Generative AI is Growing",
+          "Teams Will Scale Through AI",
+          "Generative AI in Increasing Productivity, Efficiency, and Innovation",
+          "Breaking Down AI Marketing",
+          "Commonly Asked Questions About AI in Marketing",
+          "Is AI Replacing Marketers?",
+          "Is AI in Marketing Only for Big Businesses?",
+          "Is AI in Marketing Ethical?",
+          "Can AI Completely Automate Marketing Campaigns?",
+          "Master the Art of AI in Marketing with M/E",
+          "Additional Tips and Resources"
         ],
-        "wordCount": 13691
+        "wordCount": 5189
       },
       {
-        "title": "Associate Product Marketing Manager, Early Career — Google ...",
-        "link": "https://www.google.com/about/careers/applications/jobs/results/109879132120064710-associate-product-marketing-manager/",
-        "snippet": "Preferred qualifications: Knowledge and passion for Google's products, technology, and leadership in the Artificial Intelligence (AI) space. Excellent problem- ...",
+        "title": "Artificial Intelligence In Marketing | Sprout Social",
+        "link": "https://sproutsocial.com/insights/ai-marketing/",
+        "snippet": "AI marketing combines AI technologies with customer and brand experience data to provide highly precise insights into your customer journey and market trends.",
         "headings": [
-          "job details",
-          "...",
-          "Equal opportunity"
+          "The role of artificial intelligence in marketing",
+          "How is artificial intelligence used in marketing?",
+          "Social media listening",
+          "Content generation",
+          "Automation",
+          "Audience segmentation and personalization",
+          "Data analysis for customer insights",
+          "Reputation management",
+          "Competitive intelligence",
+          "Multilingual advantage",
+          "Which AI technologies enable marketing?",
+          "1. Machine learning",
+          "2. Natural language processing (NLP)",
+          "3. Semantic search",
+          "4. Named entity recognition (NER) and neural networks",
+          "5. Sentiment analysis",
+          "What is the future of AI in marketing?",
+          "Computer vision",
+          "AI chatbots",
+          "Predictive and prescriptive AI",
+          "Responsible AI",
+          "Build impactful business strategies with AI",
+          "Try Sprout Social free with a 30-day trial",
+          "Additional resources for AI Marketing"
         ],
-        "wordCount": 13551
+        "wordCount": 3744
       },
       {
-        "title": "Head of Artificial Intelligence Go-To-Market, Google Cloud ...",
-        "link": "https://www.google.com/about/careers/applications/jobs/results/83599242056082118-head-of-artificial-intelligence-go-to-market/",
-        "snippet": "You will grow AI business across DACH region by building and leading a team working to deploy AI solutions. You will build relationships with internal partners ...",
+        "title": "What's the most impressive AI tool you have ever tried for marketing ...",
+        "link": "https://www.reddit.com/r/marketing/comments/1c5lq7z/whats_the_most_impressive_ai_tool_you_have_ever/",
+        "snippet": "Apr 16, 2024 ... There are so many AI tools out there right now. Which one has impressed you the most that you think is the best for marketers?",
         "headings": [
-          "job details",
-          "...",
-          "Equal opportunity"
+          "We value your privacy",
+          "What's the most impressive AI tool you have ever tried for marketing?",
+          "Top Posts",
+          "Don’t miss a thing from Reddit!",
+          "Log In",
+          "Enter the 6-digit code from your authenticator app",
+          "Enter a 6-digit backup code",
+          "Sign Up",
+          "Verify your email",
+          "Create your username and password",
+          "Sign Up",
+          "Verify your email",
+          "Create your username and password",
+          "Reset your password",
+          "Check your inbox",
+          "Choose a Reddit account to continue",
+          "Reset your password"
         ],
-        "wordCount": 13524
+        "wordCount": 1134
       },
       {
-        "title": "Retail & Omnichannel Marketing Trends - Think with Google",
-        "link": "https://www.google.com/think/ad-types/",
-        "snippet": "Stay on top of the latest retail trends and strategies shaping omnichannel customer experiences. Interview. Interview. Meet the Instacart CMO using AI ...",
+        "title": "AI that's built for marketing – Jasper",
+        "link": "https://www.jasper.ai/",
+        "snippet": "Jasper is purpose-built AI that helps enterprise marketers build AI-powered apps and workflows tied to real business outcomes.",
         "headings": [
-          "Consumer Insights",
-          "...",
-          "Tools"
+          "You've unlocked a 7-day free trial to try Jasper!",
+          "The AI your marketing deserves",
+          "The Jasper Platform",
+          "JasperStudio",
+          "MarketingAI Toolkit",
+          "Knowledge& Context",
+          "TrustFoundation",
+          "Solutions by Role",
+          "The Marketing AI Toolkit",
+          "Marketing Editor",
+          "Brand Voice",
+          "Style Guide",
+          "Jasper Chat",
+          "AI Image Suite",
+          "Marketing Editor",
+          "Brand Voice",
+          "Style Guide",
+          "Jasper Chat",
+          "AI Image Suite",
+          "AI App Library",
+          "Blog Post",
+          "Product Description",
+          "Instagram Caption",
+          "Landing Page",
+          "Email Sequence",
+          "Marketing Brief",
+          "Campaign Brief",
+          "Facebook Post",
+          "Listicle",
+          "Meta Title and Description",
+          "LinkedIn Post",
+          "Content Rewriter",
+          "Press Release",
+          "Instructional Post",
+          "Thought Leadership Article",
+          "Social Media Ad",
+          "Pinterest Caption",
+          "Newsletter",
+          "Promotional Email",
+          "Case Study",
+          "Video Script",
+          "Push Notification",
+          "Search Ad",
+          "Product Bullets",
+          "Customer Stories",
+          "Trust Foundation",
+          "Resources",
+          "Connect with Community",
+          "Watch Jasper Foundations",
+          "Search Knowledge Center",
+          "Customer Stories",
+          "Get Support",
+          "The Jasper Blog",
+          "Get started with Jasper today"
         ],
-        "wordCount": 795
+        "wordCount": 7574
       },
       {
-        "title": "AI Content Lead, Think with Google — Google Careers",
-        "link": "https://www.google.com/about/careers/applications/jobs/results/102160398559388358-ai-content-lead-think-with-google?page=21",
-        "snippet": "Bachelor's degree or equivalent practical experience. 6 years of experience in marketing. Experience using AI tools to develop content. Preferred qualifications ...",
+        "title": "How AI Is Transforming Marketing (2024)",
+        "link": "https://marketinghire.com/career-advice/how-ai-is-transforming-marketing",
+        "snippet": "AI has revolutionized marketing by automating tasks such as data analysis, customer segmentation, personalized content creation, and social media management.",
         "headings": [
-          "job details",
-          "...",
-          "Equal opportunity"
+          "How AI Is Transforming Marketing (2024)",
+          "The Transformative Impact of Artificial Intelligence on Marketing: Adapting for Success",
+          "AI Use and Investment in the Marketing Department",
+          "Seven Areas Where AI is Significantly Impacting Marketing:",
+          "Marketers Uncertain of the Long-Term Impact of AI on Creativity, Work Quality, and Risk Management",
+          "Junior and Mid Level Marketers are Ahead of Senior Marketers When It Comes to AI Adoption",
+          "AI and Your Career in Marketing",
+          "Related Posts",
+          "Recent Articles",
+          "The Minimum Salary for a Single Person to Cover Their Basic Needs In Every State in the US",
+          "Ghosted! What to Do When You Don’t Hear Back from a Potential Employer After a Job Interview",
+          "Marketing Terms and Acronyms Glossary",
+          "Personality Tests (FREE)",
+          "New Survey Finds Most Marketers Concerned About Technology Replacing Jobs; A Survey of CMOs Indicates Their Concerns May Be Well-Founded",
+          "For Job Seekers",
+          "For Employers",
+          "Jobs By Major City",
+          "© 2004 - 2024. All rights reserved, MarketingHire / Peter DeLegge Consulting.",
+          "Made with ❤ in the USA."
         ],
-        "wordCount": 11266
+        "wordCount": 2972
       },
       {
-        "title": "Performance Marketing Manager, Google Workspace — Google ...",
-        "link": "https://www.google.com/about/careers/applications/jobs/results/99386519566852806-performance-marketing-manager-google-workspace?page=56",
-        "snippet": "Generative AI Technical Solutions Consultant. Bengaluru, Karnataka, India ... Whether you're on a consumer product (like Gmail, Search, Maps, Chrome, Android) or ...",
+        "title": "Artificial Intelligence And The Future Of Marketing",
+        "link": "https://www.forbes.com/sites/bernardmarr/2022/09/09/artificial-intelligence-and-the-future-of-marketing/",
+        "snippet": "Sep 9, 2022 ... Well, one option is to use AI. ... What marks out Buzzfeed as a truly AI-driven content outlet is its strategy-focused approach where every piece ...",
         "headings": [
-          "job details",
-          "...",
-          "Equal opportunity"
+          "More From Forbes",
+          "Artificial Intelligence And The Future Of Marketing",
+          "Best High-Yield Savings Accounts Of 2024",
+          "Best 5% Interest Savings Accounts of 2024",
+          "Join The Conversation",
+          "Forbes Community Guidelines"
         ],
-        "wordCount": 12156
+        "wordCount": 4561
       },
       {
-        "title": "AI Strategic Pursuit Lead, Automotive AI Agent — Google Careers",
-        "link": "https://www.google.com/about/careers/applications/jobs/results/143222605594141382-ai-strategic-pursuit-lead-automotive-ai-agent",
-        "snippet": "Partner with Google's cross-functional teams (e.g., Engineering, AI Sales Specialists, etc.) to develop customer engagement and go-to-market strategies, drive ...",
+        "title": "How AI is Impacting Digital Marketing - School of Professional ...",
+        "link": "https://sps.wfu.edu/articles/how-ai-impacts-digital-marketing/",
+        "snippet": "Aug 27, 2024 ... Marketers now use AI to create content, craft campaigns, improve conversion rates, forecast results, enhance the customer experience, and more.",
         "headings": [
-          "job details",
-          "...",
-          "Equal opportunity"
+          "How AI is Impacting Digital Marketing",
+          "The Importance of AI in Digital Marketing: Brief Overview",
+          "So, What is all the Talk About GPTs?",
+          "",
+          "How AI Is Used in Digital Marketing",
+          "",
+          "Content and Communication",
+          "Customer service",
+          "Analytics and Optimization",
+          "Personalization and Customer Experience",
+          "Advance Your Expertise with a Graduate Degree in Digital Marketing",
+          "Related Stories",
+          "Post navigation"
         ],
-        "wordCount": 12156
+        "wordCount": 1718
+      },
+      {
+        "title": "How AI is transforming marketing - News - Missouri State University",
+        "link": "https://news.missouristate.edu/2024/10/03/how-ai-is-transforming-marketing/",
+        "snippet": "Oct 3, 2024 ... AI is fundamentally reshaping marketing, offering more efficient, personalized and data-driven approaches to customer engagement.",
+        "headings": [
+          "",
+          "How AI is transforming marketing",
+          "Better segmentation and targeting",
+          "Improved automation",
+          "More capable predictive analytics",
+          "Ethical considerations and future outlook",
+          "Related",
+          "Trackbacks",
+          "MSU Calendar"
+        ],
+        "wordCount": 848
       }
     ],
-    "contentGaps": []
+    "contentGaps": [
+      {
+        "category": "Understanding GPTs (Generative Pre-trained",
+        "suggestions": [
+          "Consider creating content on \"So, What is all the Talk About GPTs?\" in the context of \"Understanding GPTs (Generative Pre-trained\"."
+        ]
+      },
+      {
+        "category": "Password Reset",
+        "suggestions": [
+          "Consider creating content on \"Reset your password\" in the context of \"Password Reset\"."
+        ]
+      },
+      {
+        "category": "\"Backup Code Instructions\"",
+        "suggestions": [
+          "Consider creating content on \"Enter a 6-digit backup code\" in the context of \"\"Backup Code Instructions\"\"."
+        ]
+      },
+      {
+        "category": "\"Jasper Foundations: Instructional Resources for",
+        "suggestions": [
+          "Consider creating content on \"Watch Jasper Foundations\" in the context of \"\"Jasper Foundations: Instructional Resources for\"."
+        ]
+      },
+      {
+        "category": "\"Account Registration\"",
+        "suggestions": [
+          "Consider creating content on \"Create your username and password\" in the context of \"\"Account Registration\"\"."
+        ]
+      }
+    ]
   }

@@ -26,3 +26,4 @@
   "include": ["src/**/*"],      // Ensure all `src` files are included
   "exclude": ["node_modules"]   // Explicitly exclude node_modules for clarity
 }
+
