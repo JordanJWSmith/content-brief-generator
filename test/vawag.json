@@ -1,0 +1,38 @@
+{
+    "competitors": [
+      {
+        "title": "Girl Scouts of Japan - Google for Nonprofits",
+        "link": "https://www.google.com/intl/en-GB/nonprofits/success-stories/girl-scouts-of-japan/",
+        "snippet": "... girls and young women. The Girl Scouts organisation supports and ... violence against women, to various camps and events around the country. The ...",
+        "headings": [
+          "Girl Scouts of Japan",
+          "...",
+          "Help Centres"
+        ],
+        "wordCount": 1713
+      },
+      {
+        "title": "Google News - Search",
+        "link": "https://www.google.com/news/search?aq=f&pz=1&cf=all&ned=us&hl=en&q=rape+congo",
+        "snippet": "MSF survey shows continued cycle of violence against displaced women in eastern DR Congo ... International Women's Day Passes Silently for Women and Girls ...",
+        "headings": [
+          "rape congo"
+        ],
+        "wordCount": 4367
+      },
+      {
+        "title": "International Women's Day 2024 Doodle - Google Doodles",
+        "link": "http://www.google.com/doodles/international-womens-day-2024",
+        "snippet": "Mar 8, 2024 ... ... violence against women. Today, people celebrate women who have transformed society, fought for equality, and set positive examples for ...",
+        "headings": [
+          "International Women's Day 2024",
+          "...",
+          "Doodles"
+        ],
+        "wordCount": 736
+      }
+    ],
+    "contentGaps": [
+      "violence against women and girls"
+    ]
+  }
