@@ -29,9 +29,19 @@ export class CompetitorAnalysisService {
     try {
       const url = `https://www.googleapis.com/customsearch/v1`;
 
+      // TODO: take location and date as input params
       // Fetch search results
       const { data } = await axios.get(url, {
-        params: { key: this.apiKey, cx: this.cx, q: keyword },
+        params: {
+          key: this.apiKey,
+          cx: this.cx,
+          q: `intitle:${keyword}`,
+          excludeTerms: 'department, academic, university',
+          gl: 'uk',
+          cr: 'countryUK',
+          dateRestrict: 'd6m',
+          sort: 'date',
+        },
       });
 
       const filteredResults = this.filterResults(data.items);
@@ -205,8 +215,8 @@ export class CompetitorAnalysisService {
     try {
       const response = await this.openai.completions.create({
         model: 'gpt-3.5-turbo-instruct',
-        prompt: `Expand the following content gap by combining it with a related concept or angle:\n\nContent Gap: "${gap}"\n\nExpanded Gap:`,
-        max_tokens: 50,
+        prompt: `Expand the following content gap by combining it with a related concept or angle. Please provide a complete sentence that fully describes the expanded gap without being cut off.\n\nContent Gap: "${gap}"\n\nExpanded Gap:`,
+        max_tokens: 100,
       });
 
       return response.choices[0].text.trim();
@@ -281,6 +291,7 @@ export class CompetitorAnalysisService {
       /publications/i,
       /most viewed/i,
       /related/i,
+      /cookies/i,
       /^\s*$/, // Empty strings
     ];
 
@@ -363,10 +374,13 @@ export class CompetitorAnalysisService {
             max_tokens: 20,
           });
 
+          const name = response.choices[0].text.trim();
+          if (!name || name.length === 0) {
+            throw new Error('AI response is empty.');
+          }
+
           return {
-            name:
-              response.choices[0].text.trim() ||
-              `Cluster ${clusters.indexOf(cluster) + 1}`,
+            name,
             headings: cluster.headings,
           };
         } catch (error) {
@@ -469,7 +483,16 @@ export class CompetitorAnalysisService {
 
   private filterResults(results: any[]): any[] {
     return results.filter((item) => {
-      const excludedDomains = ['careers', 'about', 'doodles', 'jobs'];
+      const excludedDomains = [
+        'careers',
+        'about',
+        'doodles',
+        'jobs',
+        '.gov.uk',
+        'eventbrite.co.uk',
+        // 'gov.scot',
+        // 'gov',
+      ];
 
       const isExcluded = excludedDomains.some((domain) =>
         item.link.includes(domain),

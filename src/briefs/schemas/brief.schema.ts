@@ -19,6 +19,9 @@ export class Brief {
 
   @Prop({ default: Date.now })
   generatedAt: Date;
+
+  @Prop({ required: true })
+  markdownUrl: string;
 }
 
 export const BriefSchema = SchemaFactory.createForClass(Brief);

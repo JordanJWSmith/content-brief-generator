@@ -5,5 +5,11 @@ export class GenerateBriefDto {
   topic: string;
 
   @IsString()
+  keyword: string;
+
+  @IsString()
+  userId: string;
+
+  @IsString()
   content: string;
 }
