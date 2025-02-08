@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import OpenAI from "openai";
+import OpenAI from 'openai';
 import * as kmeansModule from 'ml-kmeans';
-import { normalize } from 'path';
+// import { normalize } from 'path';
 
 @Injectable()
 export class CompetitorAnalysisService {
@@ -21,60 +21,27 @@ export class CompetitorAnalysisService {
     });
 
     if (!this.openai.apiKey) {
-      throw new Error("Missing OpenAI API key. Please check your .env file.");
+      throw new Error('Missing OpenAI API key. Please check your .env file.');
     }
   }
 
-//   async fetchCompetitorData(keyword: string): Promise<any> {
-//     try {
-//       const url = `https://www.googleapis.com/customsearch/v1`;
-
-//       // Fetch competitor data
-//       const { data } = await axios.get(url, {
-//         params: { key: this.apiKey, cx: this.cx, q: keyword },
-//       });
-//       const filteredResults = this.filterResults(data.items);
-
-//       // Scrape headings from competitor pages
-//       const competitors = await Promise.all(
-//         filteredResults.map(async (item) => {
-//           const pageDetails = await this.scrapePage(item.link);
-//           return {
-//             title: item.title,
-//             link: item.link,
-//             snippet: item.snippet,
-//             ...pageDetails,
-//           };
-//         })
-//       );
-
-//       // Detect content gaps
-//       const contentGaps = await this.detectContentGaps(keyword, competitors);
-
-//       return { competitors, contentGaps };
-//     } catch (error) {
-//       this.logger.error('Error fetching competitor data:', error.message);
-//       throw new Error('Failed to fetch competitor data');
-//     }
-//   }
-
-async fetchCompetitorData(keyword: string): Promise<any> {
+  async fetchCompetitorData(keyword: string): Promise<any> {
     try {
       const url = `https://www.googleapis.com/customsearch/v1`;
-  
+
       // Fetch search results
       const { data } = await axios.get(url, {
         params: { key: this.apiKey, cx: this.cx, q: keyword },
       });
-  
+
       const filteredResults = this.filterResults(data.items);
-  
+
       // Scrape headings and retry for failed results
       const competitors = await this.scrapeCompetitorPages(filteredResults);
-  
+
       // Detect content gaps
       const contentGaps = await this.detectContentGaps(keyword, competitors);
-  
+
       return { competitors, contentGaps };
     } catch (error) {
       this.logger.error('Error fetching competitor data:', error.message);
@@ -82,35 +49,226 @@ async fetchCompetitorData(keyword: string): Promise<any> {
     }
   }
 
-  private async detectContentGaps(keyword: string, competitors: any[]): Promise<any> {
+  //   private async detectContentGaps(keyword: string, competitors: any[]): Promise<any> {
+  //     const allHeadings = competitors.flatMap((c) => c.headings);
+
+  //     // Clean and deduplicate headings
+  //     const cleanedHeadings = await this.cleanHeadings(allHeadings, keyword);
+
+  //     // Generate embeddings for all headings
+  //     const keywordEmbedding = await this.createEmbedding(keyword);
+  //     const headingEmbeddings = await this.generateEmbeddingsInBatches(cleanedHeadings);
+
+  //     // Filter headings by relevance (higher threshold for precision)
+  //     const relevantHeadings = cleanedHeadings.filter((_, index) => {
+  //       const similarity = this.calculateCosineSimilarity(keywordEmbedding, headingEmbeddings[index]);
+  //       return similarity >= 0.8; // Raised threshold
+  //     });
+
+  //     // Cluster the content gaps
+  //     const clusters = this.performClustering(relevantHeadings, headingEmbeddings);
+
+  //     // Name the clusters dynamically
+  //     const namedClusters = await this.nameClusters(clusters);
+
+  //     // Generate actionable insights
+  //     const actionableInsights = this.generateClusterInsights(namedClusters);
+
+  //     return actionableInsights;
+  //   }
+
+  private async detectContentGaps(
+    keyword: string,
+    competitors: any[],
+  ): Promise<any> {
     const allHeadings = competitors.flatMap((c) => c.headings);
 
-    // Clean and deduplicate headings
+    // Step 1: Clean and deduplicate headings
     const cleanedHeadings = await this.cleanHeadings(allHeadings, keyword);
 
-    // Generate embeddings for all headings
-    const keywordEmbedding = await this.createEmbedding(keyword);
-    const headingEmbeddings = await this.generateEmbeddingsInBatches(cleanedHeadings);
+    // Step 2: Generate embeddings for all headings and the keyword
+    // const keywordEmbedding = await this.createEmbedding(keyword);
+    const headingEmbeddings =
+      await this.generateEmbeddingsInBatches(cleanedHeadings);
 
-    // Filter headings by relevance (higher threshold for precision)
-    const relevantHeadings = cleanedHeadings.filter((_, index) => {
-      const similarity = this.calculateCosineSimilarity(keywordEmbedding, headingEmbeddings[index]);
-      return similarity >= 0.8; // Raised threshold
-    });
+    // Step 3: Identify true content gaps (filtering duplicates)
+    const initialGaps = await this.identifyTrueContentGaps(
+      cleanedHeadings,
+      headingEmbeddings,
+      competitors,
+    );
 
-    // Cluster the content gaps
-    const clusters = this.performClustering(relevantHeadings, headingEmbeddings);
+    // Step 4: Expand content gap logic (combine concepts for novelty)
+    const expandedGaps = await this.expandContentGapLogic(
+      initialGaps.headings,
+      initialGaps.embeddings,
+      // keywordEmbedding,
+    );
 
-    // Name the clusters dynamically
+    // Step 5: Integrate contextual relevance (filter for tone/style diversity)
+    const finalGaps = await this.integrateContextualRelevance(
+      expandedGaps.headings,
+      competitors,
+    );
+
+    // Step 6: Perform clustering on the refined content gaps
+    const clusters = this.performClustering(
+      finalGaps.headings,
+      finalGaps.embeddings,
+    );
+
+    // Step 7: Name the clusters dynamically
     const namedClusters = await this.nameClusters(clusters);
 
-    // Generate actionable insights
+    // Step 8: Generate actionable insights for each cluster
     const actionableInsights = this.generateClusterInsights(namedClusters);
 
     return actionableInsights;
   }
 
-  private async cleanHeadings(headings: string[], keyword: string): Promise<string[]> {
+  private async identifyTrueContentGaps(
+    cleanedHeadings: string[],
+    headingEmbeddings: number[][],
+    competitors: any[],
+  ): Promise<{ headings: string[]; embeddings: number[][] }> {
+    const gaps = [];
+    const gapEmbeddings = [];
+
+    // Extract all competitor article text for deeper novelty detection
+    const competitorContent = competitors
+      .flatMap((comp) => comp.fullContent || [])
+      .join(' ');
+
+    for (let i = 0; i < cleanedHeadings.length; i++) {
+      const heading = cleanedHeadings[i];
+      const embedding = headingEmbeddings[i];
+
+      // Check if the heading is already present in competitor headings or content
+      const isDuplicate = this.isDuplicateHeading(heading, competitorContent);
+
+      // If not a duplicate, add to gaps
+      if (!isDuplicate) {
+        gaps.push(heading);
+        gapEmbeddings.push(embedding);
+      }
+    }
+
+    return { headings: gaps, embeddings: gapEmbeddings };
+  }
+
+  private isDuplicateHeading(
+    heading: string,
+    competitorContent: string,
+  ): boolean {
+    const lowerHeading = heading.toLowerCase();
+
+    // Check for exact or near matches in competitor content
+    const isExactMatch = competitorContent.toLowerCase().includes(lowerHeading);
+
+    // Optionally, implement fuzzy matching here for near matches
+    // Example: Compare `lowerHeading` against competitor headings or phrases
+
+    return isExactMatch;
+  }
+
+  private async expandContentGapLogic(
+    gaps: string[],
+    embeddings: number[][],
+    // keywordEmbedding: number[],
+  ): Promise<{ headings: string[]; embeddings: number[][] }> {
+    const expandedGaps = [];
+    const expandedEmbeddings = [];
+
+    for (let i = 0; i < gaps.length; i++) {
+      const gap = gaps[i];
+      const embedding = embeddings[i];
+
+      // Expand gap by combining concepts
+      const expandedGap = await this.expandGapWithConcepts(
+        gap,
+        // keywordEmbedding,
+      );
+
+      this.logger.log(`Expanded Gap: ${expandedGap}`);
+
+      expandedGaps.push(expandedGap);
+      expandedEmbeddings.push(embedding); // Keep the same embedding for simplicity
+    }
+
+    return { headings: expandedGaps, embeddings: expandedEmbeddings };
+  }
+
+  private async expandGapWithConcepts(
+    gap: string,
+    // keywordEmbedding: number[],
+  ): Promise<string> {
+    try {
+      const response = await this.openai.completions.create({
+        model: 'gpt-3.5-turbo-instruct',
+        prompt: `Expand the following content gap by combining it with a related concept or angle:\n\nContent Gap: "${gap}"\n\nExpanded Gap:`,
+        max_tokens: 50,
+      });
+
+      return response.choices[0].text.trim();
+    } catch (error) {
+      this.logger.error(`Error expanding gap "${gap}":`, error.message);
+      return gap; // Return the original gap if expansion fails
+    }
+  }
+
+  private async integrateContextualRelevance(
+    gaps: string[],
+    competitors: any[],
+  ): Promise<{ headings: string[]; embeddings: number[][] }> {
+    const relevantGaps = [];
+    const relevantEmbeddings = [];
+
+    for (const gap of gaps) {
+      const gapRelevance = await this.analyzeGapRelevance(gap, competitors);
+
+      // Add gaps with a sufficiently different tone or approach
+      if (gapRelevance.isDifferent) {
+        relevantGaps.push(gapRelevance.gap);
+        relevantEmbeddings.push(await this.createEmbedding(gapRelevance.gap));
+      }
+    }
+
+    return { headings: relevantGaps, embeddings: relevantEmbeddings };
+  }
+
+  private async analyzeGapRelevance(
+    gap: string,
+    competitors: any[],
+  ): Promise<{ gap: string; isDifferent: boolean }> {
+    try {
+      // Generate a comparative prompt
+      const competitorSnippets = competitors
+        .flatMap((c) => c.snippet || [])
+        .slice(0, 5)
+        .join('\n');
+      const response = await this.openai.completions.create({
+        model: 'gpt-3.5-turbo-instruct',
+        prompt: `Analyze the following gap for tone and approach differences compared to these competitor snippets:\n\nCompetitor Snippets:\n${competitorSnippets}\n\nContent Gap: "${gap}"\n\nIs this gap significantly different in tone, style, or approach? Respond with "yes" or "no".`,
+        max_tokens: 10,
+      });
+
+      const output = response.choices[0].text.trim().toLowerCase();
+      const isDifferent = output.includes('yes');
+
+      return { gap, isDifferent };
+    } catch (error) {
+      this.logger.error(
+        `Error analyzing gap relevance for "${gap}":`,
+        error.message,
+      );
+      return { gap, isDifferent: false };
+    }
+  }
+
+  private async cleanHeadings(
+    headings: string[],
+    keyword: string,
+  ): Promise<string[]> {
     const irrelevantPatterns = [
       /log in/i,
       /sign up/i,
@@ -139,28 +297,41 @@ async fetchCompetitorData(keyword: string): Promise<any> {
 
     // Use NLP-based checks for topic relevance
     const relevanceScores = await Promise.all(
-      meaningfulHeadings.map((heading) => this.calculateHeadingRelevance(keyword, heading))
+      meaningfulHeadings.map((heading) =>
+        this.calculateHeadingRelevance(keyword, heading),
+      ),
     );
 
     // Filter by relevance threshold (higher precision)
-    const relevantHeadings = meaningfulHeadings.filter((_, index) => relevanceScores[index] >= 0.8);
+    const relevantHeadings = meaningfulHeadings.filter(
+      (_, index) => relevanceScores[index] >= 0.8,
+    );
 
     // Deduplicate and return
     return Array.from(new Set(relevantHeadings));
   }
 
-  private async calculateHeadingRelevance(keyword: string, heading: string): Promise<number> {
+  private async calculateHeadingRelevance(
+    keyword: string,
+    heading: string,
+  ): Promise<number> {
     try {
       const keywordEmbedding = await this.createEmbedding(keyword);
       const headingEmbedding = await this.createEmbedding(heading);
       return this.calculateCosineSimilarity(keywordEmbedding, headingEmbedding);
     } catch (error) {
-      this.logger.error(`Error calculating relevance for heading: "${heading}"`, error.message);
+      this.logger.error(
+        `Error calculating relevance for heading: "${heading}"`,
+        error.message,
+      );
       return 0; // Treat errors as low relevance
     }
   }
 
-  private performClustering(headings: string[], embeddings: number[][]): { name: string; headings: string[] }[] {
+  private performClustering(
+    headings: string[],
+    embeddings: number[][],
+  ): { name: string; headings: string[] }[] {
     const numClusters = Math.min(headings.length, 5);
     const { clusters } = kmeansModule.kmeans(embeddings, numClusters, {});
     this.logger.log(`Clusters: ${JSON.stringify(clusters)}`);
@@ -179,19 +350,23 @@ async fetchCompetitorData(keyword: string): Promise<any> {
     }));
   }
 
-  private async nameClusters(clusters: { name: string; headings: string[] }[]): Promise<any[]> {
+  private async nameClusters(
+    clusters: { name: string; headings: string[] }[],
+  ): Promise<any[]> {
     return await Promise.all(
       clusters.map(async (cluster) => {
-        const clusterSummary = cluster.headings.slice(0, 5).join(", ");
+        const clusterSummary = cluster.headings.slice(0, 5).join(', ');
         try {
           const response = await this.openai.completions.create({
-            model: "gpt-3.5-turbo-instruct",
-            prompt: `The following headings are grouped together based on semantic similarity:\n\n${clusterSummary}\n\nProvide a concise label summarizing this group:`,
-            max_tokens: 10,
+            model: 'gpt-3.5-turbo-instruct',
+            prompt: `The following headings are grouped together based on semantic similarity:\n\n${clusterSummary}\n\nProvide a very, very concise label summarizing this group:`,
+            max_tokens: 20,
           });
 
           return {
-            name: response.choices[0].text.trim() || `Cluster ${clusters.indexOf(cluster) + 1}`,
+            name:
+              response.choices[0].text.trim() ||
+              `Cluster ${clusters.indexOf(cluster) + 1}`,
             headings: cluster.headings,
           };
         } catch (error) {
@@ -201,16 +376,15 @@ async fetchCompetitorData(keyword: string): Promise<any> {
             headings: cluster.headings,
           };
         }
-      })
+      }),
     );
   }
 
   private generateClusterInsights(namedClusters: any[]): any {
+    // Return structured data: category name and associated headings
     return namedClusters.map((cluster) => ({
       category: cluster.name,
-      suggestions: cluster.headings.map(
-        (heading) => `Consider creating content on "${heading}" in the context of "${cluster.name}".`
-      ),
+      headings: cluster.headings, // Return raw headings directly
     }));
   }
 
@@ -225,16 +399,14 @@ async fetchCompetitorData(keyword: string): Promise<any> {
   async createEmbedding(input: string): Promise<number[]> {
     const normalizedInput = input.trim().toLowerCase();
 
-    
-
     if (this.pendingEmbeddings.has(normalizedInput)) {
-        this.logger.log(`Reusing in-progress embedding for: ${normalizedInput}`);
-        return this.pendingEmbeddings.get(normalizedInput);
+      this.logger.log(`Reusing in-progress embedding for: ${normalizedInput}`);
+      return this.pendingEmbeddings.get(normalizedInput);
     }
 
     if (this.embeddingCache.has(normalizedInput)) {
-        this.logger.log(`Reusing cached embedding for: ${normalizedInput}`);
-        return this.embeddingCache.get(normalizedInput);
+      this.logger.log(`Reusing cached embedding for: ${normalizedInput}`);
+      return this.embeddingCache.get(normalizedInput);
     }
 
     this.logger.log(`Creating embedding for: ${normalizedInput}`);
@@ -242,7 +414,7 @@ async fetchCompetitorData(keyword: string): Promise<any> {
     const embeddingPromise = (async () => {
       try {
         const response = await this.openai.embeddings.create({
-          model: "text-embedding-ada-002",
+          model: 'text-embedding-ada-002',
           input: normalizedInput,
         });
 
@@ -251,8 +423,11 @@ async fetchCompetitorData(keyword: string): Promise<any> {
 
         return embedding;
       } catch (error) {
-        this.logger.error(`Error creating embedding for input "${normalizedInput}":`, error.message);
-        throw new Error("Failed to create embedding");
+        this.logger.error(
+          `Error creating embedding for input "${normalizedInput}":`,
+          error.message,
+        );
+        throw new Error('Failed to create embedding');
       } finally {
         this.pendingEmbeddings.delete(normalizedInput);
       }
@@ -262,7 +437,10 @@ async fetchCompetitorData(keyword: string): Promise<any> {
     return embeddingPromise;
   }
 
-  private async generateEmbeddingsInBatches(inputs: string[], batchSize = 10): Promise<number[][]> {
+  private async generateEmbeddingsInBatches(
+    inputs: string[],
+    batchSize = 10,
+  ): Promise<number[][]> {
     const embeddings: number[][] = [];
     const toGenerate: string[] = [];
 
@@ -280,7 +458,9 @@ async fetchCompetitorData(keyword: string): Promise<any> {
     }
 
     for (const batch of batches) {
-      const batchEmbeddings = await Promise.all(batch.map((input: string) => this.createEmbedding(input)));
+      const batchEmbeddings = await Promise.all(
+        batch.map((input: string) => this.createEmbedding(input)),
+      );
       embeddings.push(...batchEmbeddings);
     }
 
@@ -289,14 +469,11 @@ async fetchCompetitorData(keyword: string): Promise<any> {
 
   private filterResults(results: any[]): any[] {
     return results.filter((item) => {
-      const excludedDomains = [
-        'careers',
-        'about',
-        'doodles',
-        'jobs',
-      ];
+      const excludedDomains = ['careers', 'about', 'doodles', 'jobs'];
 
-      const isExcluded = excludedDomains.some((domain) => item.link.includes(domain));
+      const isExcluded = excludedDomains.some((domain) =>
+        item.link.includes(domain),
+      );
       const isSnippetRelevant = item.snippet && item.snippet.length > 50;
 
       return !isExcluded && isSnippetRelevant;
@@ -306,11 +483,11 @@ async fetchCompetitorData(keyword: string): Promise<any> {
   private async scrapeCompetitorPages(results: any[]): Promise<any[]> {
     const competitors = [];
     const failedUrls = [];
-  
+
     for (const result of results) {
       try {
         const pageDetails = await this.scrapePage(result.link);
-  
+
         if (pageDetails.headings.length > 0 && pageDetails.wordCount > 0) {
           competitors.push({
             title: result.title,
@@ -327,18 +504,18 @@ async fetchCompetitorData(keyword: string): Promise<any> {
         failedUrls.push(result.link);
       }
     }
-  
+
     // Replace failed results with alternative articles
     const alternativeResults = results.filter(
-      (result) => !competitors.some((comp) => comp.link === result.link)
+      (result) => !competitors.some((comp) => comp.link === result.link),
     );
-  
+
     for (const altResult of alternativeResults) {
       if (competitors.length >= 10) break; // Limit to top 10 competitors
-  
+
       try {
         const pageDetails = await this.scrapePage(altResult.link);
-  
+
         if (pageDetails.headings.length > 0 && pageDetails.wordCount > 0) {
           competitors.push({
             title: altResult.title,
@@ -348,62 +525,63 @@ async fetchCompetitorData(keyword: string): Promise<any> {
           });
         }
       } catch (error) {
-        this.logger.error(`Error scraping alternative result ${altResult.link}: ${error.message}`);
+        this.logger.error(
+          `Error scraping alternative result ${altResult.link}: ${error.message}`,
+        );
       }
     }
-  
+
     return competitors;
   }
-  
 
-//   private async scrapePage(url: string): Promise<any> {
-//     try {
-//       const { data } = await axios.get(url);
-//       const $ = cheerio.load(data);
+  //   private async scrapePage(url: string): Promise<any> {
+  //     try {
+  //       const { data } = await axios.get(url);
+  //       const $ = cheerio.load(data);
 
-//       const headings = [];
-//       $('h1, h2, h3').each((_, element) => {
-//         headings.push($(element).text().trim());
-//       });
+  //       const headings = [];
+  //       $('h1, h2, h3').each((_, element) => {
+  //         headings.push($(element).text().trim());
+  //       });
 
-//       const wordCount = $('body')
-//         .text()
-//         .split(/\s+/)
-//         .length;
+  //       const wordCount = $('body')
+  //         .text()
+  //         .split(/\s+/)
+  //         .length;
 
-//       return { headings, wordCount };
-//     } catch (error) {
-//       this.logger.error(`Error scraping ${url}:`, error.message);
-//       return { headings: [], wordCount: 0 };
-//     }
-//   }
+  //       return { headings, wordCount };
+  //     } catch (error) {
+  //       this.logger.error(`Error scraping ${url}:`, error.message);
+  //       return { headings: [], wordCount: 0 };
+  //     }
+  //   }
 
-private async scrapePage(url: string, retries = 3): Promise<any> {
+  private async scrapePage(url: string, retries = 1): Promise<any> {
     try {
       const { data } = await axios.get(url);
       const $ = cheerio.load(data);
-  
+
       const headings = [];
       $('h1, h2, h3').each((_, element) => {
         headings.push($(element).text().trim());
       });
-  
-      const wordCount = $('body')
-        .text()
-        .split(/\s+/)
-        .length;
-  
+
+      const wordCount = $('body').text().split(/\s+/).length;
+
       return { headings, wordCount };
     } catch (error) {
       if (retries > 0) {
-        this.logger.warn(`Retrying scraping for ${url}. Retries left: ${retries - 1}`);
-        await new Promise((resolve) => setTimeout(resolve, 1000 * (4 - retries))); // Exponential backoff
+        this.logger.warn(
+          `Retrying scraping for ${url}. Retries left: ${retries - 1}`,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * (4 - retries)),
+        ); // Exponential backoff
         return this.scrapePage(url, retries - 1);
       }
-  
+
       this.logger.error(`Scraping failed for ${url}: ${error.message}`);
       return { headings: [], wordCount: 0 };
     }
   }
-  
 }

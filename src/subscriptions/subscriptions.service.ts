@@ -11,8 +11,12 @@ export class SubscriptionsService {
     private readonly subscriptionRepository: Repository<Subscription>,
   ) {}
 
-  async create(createSubscriptionDto: CreateSubscriptionDto): Promise<Subscription> {
-    const subscription = this.subscriptionRepository.create(createSubscriptionDto);
+  async create(
+    createSubscriptionDto: CreateSubscriptionDto,
+  ): Promise<Subscription> {
+    const subscription = this.subscriptionRepository.create(
+      createSubscriptionDto,
+    );
     return this.subscriptionRepository.save(subscription);
   }
 

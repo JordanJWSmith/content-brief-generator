@@ -6,9 +6,10 @@ import { Brief, BriefSchema } from './schemas/brief.schema';
 import { SeoService } from './seo/seo.service';
 import { CompetitorAnalysisService } from './seo/competitor-analysis.service';
 
-
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Brief.name, schema: BriefSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: Brief.name, schema: BriefSchema }]),
+  ],
   controllers: [BriefsController],
   providers: [BriefsService, SeoService, CompetitorAnalysisService],
   exports: [BriefsService],

@@ -8,7 +8,9 @@ export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   @Post()
-  async create(@Body() createSubscriptionDto: CreateSubscriptionDto): Promise<Subscription> {
+  async create(
+    @Body() createSubscriptionDto: CreateSubscriptionDto,
+  ): Promise<Subscription> {
     return this.subscriptionsService.create(createSubscriptionDto);
   }
 

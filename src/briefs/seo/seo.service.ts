@@ -17,20 +17,20 @@ export class SeoService {
         type: 'PLAIN_TEXT',
       },
     });
-  
+
     // Process and refine the keywords
     const keywords = result.entities
-      .filter(entity => entity.salience > 0.1) // Exclude low-relevance keywords
-      .map(entity => ({
+      .filter((entity) => entity.salience > 0.1) // Exclude low-relevance keywords
+      .map((entity) => ({
         name: entity.name,
         type: entity.type, // ENTITY_TYPE like PERSON, LOCATION, ORGANIZATION, etc.
         salience: parseFloat(entity.salience.toFixed(2)), // Round salience
       }));
-  
+
     // Categorize primary and secondary keywords
     return {
-      primaryKeywords: keywords.filter(keyword => keyword.salience > 0.5),
-      secondaryKeywords: keywords.filter(keyword => keyword.salience <= 0.5),
+      primaryKeywords: keywords.filter((keyword) => keyword.salience > 0.5),
+      secondaryKeywords: keywords.filter((keyword) => keyword.salience <= 0.5),
     };
   }
 }

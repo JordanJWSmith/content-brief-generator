@@ -17,7 +17,8 @@ export class UsersService {
       const user = this.userRepository.create(createUserDto);
       return await this.userRepository.save(user);
     } catch (error) {
-      if (error.code === '23505') { // PostgreSQL duplicate key error code
+      if (error.code === '23505') {
+        // PostgreSQL duplicate key error code
         throw new ConflictException('Email already exists');
       }
       throw error;

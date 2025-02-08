@@ -12,7 +12,7 @@ export class BriefsController {
     private readonly briefsService: BriefsService,
     private readonly seoService: SeoService,
     private readonly competitorAnalysisService: CompetitorAnalysisService,
-) {}
+  ) {}
 
   @Post()
   async create(@Body() generateBriefDto: GenerateBriefDto): Promise<Brief> {
@@ -30,7 +30,9 @@ export class BriefsController {
   }
 
   @Post('analyze-keywords')
-  async analyzeKeywords(@Body() analyzeKeywordsDto: AnalyzeKeywordsDto): Promise<any> {
+  async analyzeKeywords(
+    @Body() analyzeKeywordsDto: AnalyzeKeywordsDto,
+  ): Promise<any> {
     const { content } = analyzeKeywordsDto; // DTO validates the input
     return this.seoService.analyzeKeywords(content);
   }
