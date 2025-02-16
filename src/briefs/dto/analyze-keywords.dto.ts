@@ -4,4 +4,7 @@ export class AnalyzeKeywordsDto {
   @IsString()
   @MinLength(10, { message: 'Content must be at least 10 characters long' })
   content: string;
+
+  @IsString()
+  keyword: string;
 }

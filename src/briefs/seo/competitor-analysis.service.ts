@@ -35,11 +35,12 @@ export class CompetitorAnalysisService {
         params: {
           key: this.apiKey,
           cx: this.cx,
-          q: `intitle:${keyword}`,
+          // q: `intitle:${keyword}`,
+          q: `${keyword} articles UK`,
           excludeTerms: 'department, academic, university',
           gl: 'uk',
           cr: 'countryUK',
-          dateRestrict: 'd6m',
+          dateRestrict: 'd1m',
           sort: 'date',
         },
       });
@@ -58,34 +59,6 @@ export class CompetitorAnalysisService {
       throw new Error('Failed to fetch competitor data');
     }
   }
-
-  //   private async detectContentGaps(keyword: string, competitors: any[]): Promise<any> {
-  //     const allHeadings = competitors.flatMap((c) => c.headings);
-
-  //     // Clean and deduplicate headings
-  //     const cleanedHeadings = await this.cleanHeadings(allHeadings, keyword);
-
-  //     // Generate embeddings for all headings
-  //     const keywordEmbedding = await this.createEmbedding(keyword);
-  //     const headingEmbeddings = await this.generateEmbeddingsInBatches(cleanedHeadings);
-
-  //     // Filter headings by relevance (higher threshold for precision)
-  //     const relevantHeadings = cleanedHeadings.filter((_, index) => {
-  //       const similarity = this.calculateCosineSimilarity(keywordEmbedding, headingEmbeddings[index]);
-  //       return similarity >= 0.8; // Raised threshold
-  //     });
-
-  //     // Cluster the content gaps
-  //     const clusters = this.performClustering(relevantHeadings, headingEmbeddings);
-
-  //     // Name the clusters dynamically
-  //     const namedClusters = await this.nameClusters(clusters);
-
-  //     // Generate actionable insights
-  //     const actionableInsights = this.generateClusterInsights(namedClusters);
-
-  //     return actionableInsights;
-  //   }
 
   private async detectContentGaps(
     keyword: string,
@@ -490,8 +463,9 @@ export class CompetitorAnalysisService {
         'jobs',
         '.gov.uk',
         'eventbrite.co.uk',
-        // 'gov.scot',
-        // 'gov',
+        'gov.scot',
+        'gov',
+        'police.uk',
       ];
 
       const isExcluded = excludedDomains.some((domain) =>
@@ -557,30 +531,9 @@ export class CompetitorAnalysisService {
     return competitors;
   }
 
-  //   private async scrapePage(url: string): Promise<any> {
-  //     try {
-  //       const { data } = await axios.get(url);
-  //       const $ = cheerio.load(data);
-
-  //       const headings = [];
-  //       $('h1, h2, h3').each((_, element) => {
-  //         headings.push($(element).text().trim());
-  //       });
-
-  //       const wordCount = $('body')
-  //         .text()
-  //         .split(/\s+/)
-  //         .length;
-
-  //       return { headings, wordCount };
-  //     } catch (error) {
-  //       this.logger.error(`Error scraping ${url}:`, error.message);
-  //       return { headings: [], wordCount: 0 };
-  //     }
-  //   }
-
   private async scrapePage(url: string, retries = 1): Promise<any> {
     try {
+      this.logger.log(`Scraping ${url}`);
       const { data } = await axios.get(url);
       const $ = cheerio.load(data);
 

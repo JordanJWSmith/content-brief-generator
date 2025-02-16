@@ -33,8 +33,8 @@ export class BriefsController {
   async analyzeKeywords(
     @Body() analyzeKeywordsDto: AnalyzeKeywordsDto,
   ): Promise<any> {
-    const { content } = analyzeKeywordsDto; // DTO validates the input
-    return this.seoService.analyzeKeywords(content);
+    const { content, keyword } = analyzeKeywordsDto; // DTO validates the input
+    return this.seoService.analyzeKeywords(content, keyword);
   }
 
   @Post('analyze-competitors')
