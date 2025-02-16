@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import OpenAI from 'openai';
 import * as kmeansModule from 'ml-kmeans';
+// import cluster from 'cluster';
 // import { normalize } from 'path';
 
 @Injectable()
@@ -25,18 +26,23 @@ export class CompetitorAnalysisService {
     }
   }
 
-  async fetchCompetitorData(keyword: string): Promise<any> {
+  async fetchCompetitorData(
+    topic: string,
+    focus: string,
+    goal: string,
+    tone: string,
+  ): Promise<any> {
     try {
       const url = `https://www.googleapis.com/customsearch/v1`;
+      // 🔹 Build a richer search query to retrieve **relevant** competitor content
+      const searchQuery = `${topic} ${focus} articles UK`;
 
-      // TODO: take location and date as input params
       // Fetch search results
       const { data } = await axios.get(url, {
         params: {
           key: this.apiKey,
           cx: this.cx,
-          // q: `intitle:${keyword}`,
-          q: `${keyword} articles UK`,
+          q: searchQuery,
           excludeTerms: 'department, academic, university',
           gl: 'uk',
           cr: 'countryUK',
@@ -50,63 +56,72 @@ export class CompetitorAnalysisService {
       // Scrape headings and retry for failed results
       const competitors = await this.scrapeCompetitorPages(filteredResults);
 
-      // Detect content gaps
-      const contentGaps = await this.detectContentGaps(keyword, competitors);
+      this.logger.verbose('Finished scraping competitors');
+      this.logger.verbose('Generating content angles...');
 
-      return { competitors, contentGaps };
+      // Detect content gaps and cluster them into topic areas **aligned with focus & goal**
+      const contentAngles = await this.suggestContentAngles(
+        topic,
+        focus,
+        goal,
+        tone,
+        competitors,
+      );
+
+      this.logger.verbose('Finished suggesting content angles');
+
+      return { competitors, contentAngles };
     } catch (error) {
       this.logger.error('Error fetching competitor data:', error.message);
       throw new Error('Failed to fetch competitor data');
     }
   }
 
-  private async detectContentGaps(
-    keyword: string,
+  private async suggestContentAngles(
+    topic: string,
+    focus: string,
+    goal: string,
+    tone: string,
     competitors: any[],
-  ): Promise<any> {
+  ): Promise<string[]> {
     const allHeadings = competitors.flatMap((c) => c.headings);
 
     // Step 1: Clean and deduplicate headings
-    const cleanedHeadings = await this.cleanHeadings(allHeadings, keyword);
+    const cleanedHeadings = await this.cleanHeadings(allHeadings, topic);
+    this.logger.verbose(`Finished cleaning headings`);
 
-    // Step 2: Generate embeddings for all headings and the keyword
-    // const keywordEmbedding = await this.createEmbedding(keyword);
+    // Step 2: Generate embeddings for all headings
     const headingEmbeddings =
       await this.generateEmbeddingsInBatches(cleanedHeadings);
+    this.logger.verbose(`Finished generating heading embeddings`);
 
-    // Step 3: Identify true content gaps (filtering duplicates)
+    // Step 3: Identify content gaps (filtering duplicates)
     const initialGaps = await this.identifyTrueContentGaps(
       cleanedHeadings,
       headingEmbeddings,
       competitors,
     );
+    this.logger.verbose(`Identified content gaps`);
 
-    // Step 4: Expand content gap logic (combine concepts for novelty)
-    const expandedGaps = await this.expandContentGapLogic(
+    // Step 4: Cluster content gaps into **topic areas relevant to the user focus & goal**
+    const clusters = this.performClustering(
       initialGaps.headings,
       initialGaps.embeddings,
-      // keywordEmbedding,
+    );
+    this.logger.verbose(`Performed clustering`);
+
+    // Step 5: Generate AI-driven content angles **tailored to focus & goal**
+    // const namedAngles = await this.nameClusters(clusters, focus, goal, tone);
+    const namedAngles = await this.nameClustersGpt4(
+      clusters,
+      focus,
+      goal,
+      tone,
     );
 
-    // Step 5: Integrate contextual relevance (filter for tone/style diversity)
-    const finalGaps = await this.integrateContextualRelevance(
-      expandedGaps.headings,
-      competitors,
-    );
+    return namedAngles;
 
-    // Step 6: Perform clustering on the refined content gaps
-    const clusters = this.performClustering(
-      finalGaps.headings,
-      finalGaps.embeddings,
-    );
-
-    // Step 7: Name the clusters dynamically
-    const namedClusters = await this.nameClusters(clusters);
-
-    // Step 8: Generate actionable insights for each cluster
-    const actionableInsights = this.generateClusterInsights(namedClusters);
-
-    return actionableInsights;
+    // return namedAngles.map((angle) => angle.name);
   }
 
   private async identifyTrueContentGaps(
@@ -154,100 +169,6 @@ export class CompetitorAnalysisService {
     return isExactMatch;
   }
 
-  private async expandContentGapLogic(
-    gaps: string[],
-    embeddings: number[][],
-    // keywordEmbedding: number[],
-  ): Promise<{ headings: string[]; embeddings: number[][] }> {
-    const expandedGaps = [];
-    const expandedEmbeddings = [];
-
-    for (let i = 0; i < gaps.length; i++) {
-      const gap = gaps[i];
-      const embedding = embeddings[i];
-
-      // Expand gap by combining concepts
-      const expandedGap = await this.expandGapWithConcepts(
-        gap,
-        // keywordEmbedding,
-      );
-
-      this.logger.log(`Expanded Gap: ${expandedGap}`);
-
-      expandedGaps.push(expandedGap);
-      expandedEmbeddings.push(embedding); // Keep the same embedding for simplicity
-    }
-
-    return { headings: expandedGaps, embeddings: expandedEmbeddings };
-  }
-
-  private async expandGapWithConcepts(
-    gap: string,
-    // keywordEmbedding: number[],
-  ): Promise<string> {
-    try {
-      const response = await this.openai.completions.create({
-        model: 'gpt-3.5-turbo-instruct',
-        prompt: `Expand the following content gap by combining it with a related concept or angle. Please provide a complete sentence that fully describes the expanded gap without being cut off.\n\nContent Gap: "${gap}"\n\nExpanded Gap:`,
-        max_tokens: 100,
-      });
-
-      return response.choices[0].text.trim();
-    } catch (error) {
-      this.logger.error(`Error expanding gap "${gap}":`, error.message);
-      return gap; // Return the original gap if expansion fails
-    }
-  }
-
-  private async integrateContextualRelevance(
-    gaps: string[],
-    competitors: any[],
-  ): Promise<{ headings: string[]; embeddings: number[][] }> {
-    const relevantGaps = [];
-    const relevantEmbeddings = [];
-
-    for (const gap of gaps) {
-      const gapRelevance = await this.analyzeGapRelevance(gap, competitors);
-
-      // Add gaps with a sufficiently different tone or approach
-      if (gapRelevance.isDifferent) {
-        relevantGaps.push(gapRelevance.gap);
-        relevantEmbeddings.push(await this.createEmbedding(gapRelevance.gap));
-      }
-    }
-
-    return { headings: relevantGaps, embeddings: relevantEmbeddings };
-  }
-
-  private async analyzeGapRelevance(
-    gap: string,
-    competitors: any[],
-  ): Promise<{ gap: string; isDifferent: boolean }> {
-    try {
-      // Generate a comparative prompt
-      const competitorSnippets = competitors
-        .flatMap((c) => c.snippet || [])
-        .slice(0, 5)
-        .join('\n');
-      const response = await this.openai.completions.create({
-        model: 'gpt-3.5-turbo-instruct',
-        prompt: `Analyze the following gap for tone and approach differences compared to these competitor snippets:\n\nCompetitor Snippets:\n${competitorSnippets}\n\nContent Gap: "${gap}"\n\nIs this gap significantly different in tone, style, or approach? Respond with "yes" or "no".`,
-        max_tokens: 10,
-      });
-
-      const output = response.choices[0].text.trim().toLowerCase();
-      const isDifferent = output.includes('yes');
-
-      return { gap, isDifferent };
-    } catch (error) {
-      this.logger.error(
-        `Error analyzing gap relevance for "${gap}":`,
-        error.message,
-      );
-      return { gap, isDifferent: false };
-    }
-  }
-
   private async cleanHeadings(
     headings: string[],
     keyword: string,
@@ -265,6 +186,11 @@ export class CompetitorAnalysisService {
       /most viewed/i,
       /related/i,
       /cookies/i,
+      /social/i,
+      /related/i,
+      /navigation/i,
+      /links/i,
+      /recommended/i,
       /^\s*$/, // Empty strings
     ];
 
@@ -316,9 +242,8 @@ export class CompetitorAnalysisService {
     headings: string[],
     embeddings: number[][],
   ): { name: string; headings: string[] }[] {
-    const numClusters = Math.min(headings.length, 5);
+    const numClusters = Math.min(headings.length, 5); // Ensure we return a few well-defined angles
     const { clusters } = kmeansModule.kmeans(embeddings, numClusters, {});
-    this.logger.log(`Clusters: ${JSON.stringify(clusters)}`);
 
     const clusterMap: { [key: number]: string[] } = {};
     clusters.forEach((clusterIndex, i) => {
@@ -329,50 +254,98 @@ export class CompetitorAnalysisService {
     });
 
     return Object.values(clusterMap).map((clusterHeadings, index) => ({
-      name: `Cluster ${index + 1}`,
+      name: `Cluster ${index + 1}`, // Temporary name (to be replaced)
       headings: clusterHeadings,
     }));
   }
 
-  private async nameClusters(
+  private async nameClustersGpt4(
     clusters: { name: string; headings: string[] }[],
-  ): Promise<any[]> {
-    return await Promise.all(
-      clusters.map(async (cluster) => {
-        const clusterSummary = cluster.headings.slice(0, 5).join(', ');
-        try {
-          const response = await this.openai.completions.create({
-            model: 'gpt-3.5-turbo-instruct',
-            prompt: `The following headings are grouped together based on semantic similarity:\n\n${clusterSummary}\n\nProvide a very, very concise label summarizing this group:`,
-            max_tokens: 20,
-          });
-
-          const name = response.choices[0].text.trim();
-          if (!name || name.length === 0) {
-            throw new Error('AI response is empty.');
-          }
-
-          return {
-            name,
-            headings: cluster.headings,
-          };
-        } catch (error) {
-          this.logger.error('Error naming cluster:', error.message);
-          return {
-            name: `Cluster ${clusters.indexOf(cluster) + 1}`,
-            headings: cluster.headings,
-          };
-        }
-      }),
+    focus: string,
+    goal: string,
+    tone: string,
+  ): Promise<any> {
+    this.logger.log(`clusterInput: ${clusters}`);
+    const clusterSummaries = clusters.map(
+      (c, index) => `${index + 1}. ${c.headings.slice(0, 5).join(', ')}`,
     );
+    this.logger.log(`clusterSummaries: ${clusterSummaries}`);
+    const prompt = `
+      You are an expert content strategist. The user wants to write about **"${focus}"** with the goal of **"${goal}"** with the tone **"${tone}"**.
+      
+      You will be provided a set of topics extracted from competitor analysis.
+      📌 **Task:** Generate diverse content angles based on competitor research.
+      
+      📝 **Your Task:**
+      1. Assign **one unique content angle** to each topic.
+      2. Ensure that **NO TWO angles use the same framing**.
+      3. Choose from the following perspectives:
+        - **Personal & Survivor Stories**
+        - **Policy & Government Actions**
+        - **Advocacy & Awareness Movements**
+        - **Media & Cultural Influence**
+        - **Historical & Global Comparisons**
+      4. Each angle should be **specific and engaging**.
+      5. **Avoid generic titles**—be as **distinctive as possible**.
+      
+      🔹 **Now generate content angles for the topics above. Each one should use a DIFFERENT perspective.**
+      Provide your output as an array in the following JSON format:
+      {
+        "angles" : [
+          {
+            "angle": "...",
+            "chosenPerspective": "..."
+          },
+          {
+            ...
+          }
+        ]
+      }
+    `;
+    const clusterResponse = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'developer', content: prompt },
+        {
+          role: 'user',
+          content: `${JSON.stringify(clusterSummaries)}`,
+        },
+      ],
+      response_format: {
+        type: 'json_object',
+      },
+    });
+    const clusterObj = this.parseOpenAiOutput(clusterResponse);
+    this.logger.log(`clusterObj: ${JSON.stringify(clusterObj)}`);
+
+    // const namedClusters = clusters.map((cluster, index) => ({
+    //   name: clusterObj.angles[index]?.angle || `Cluster ${index + 1}`, // Use the generated angle, fallback if missing
+    //   perspective: clusterObj.angles[index]?.chosenPerspective || 'General', // Include the chosen perspective
+    //   headings: cluster.headings, // Retain the original headings
+    // }));
+
+    return clusterObj;
   }
 
-  private generateClusterInsights(namedClusters: any[]): any {
-    // Return structured data: category name and associated headings
-    return namedClusters.map((cluster) => ({
-      category: cluster.name,
-      headings: cluster.headings, // Return raw headings directly
-    }));
+  private parseOpenAiOutput(
+    responseObject: Record<string, any>,
+  ): Record<string, any> {
+    const rawContent = responseObject.choices[0].message.content;
+    let sanitized = rawContent.trim();
+    // If the entire string is wrapped in quotes, remove them.
+    if (sanitized.startsWith('"') && sanitized.endsWith('"')) {
+      sanitized = sanitized.slice(1, -1);
+    }
+    // Replace literal newline characters with the escaped newline sequence.
+    sanitized = sanitized.replace(/\r?\n/g, '');
+    // Remove any trailing commas before a closing brace or bracket.
+    sanitized = sanitized.replace(/,\s*([}\]])/g, '$1');
+    // Replace double backslashes (\\) with a single backslash (\)
+    // This is useful if the string is double-encoded.
+    sanitized = sanitized.replace(/\\\\/g, '');
+    this.logger.log(`attempting to parse: ${JSON.stringify(sanitized)}`);
+
+    return JSON.parse(sanitized);
   }
 
   private calculateCosineSimilarity(vecA: number[], vecB: number[]): number {
@@ -466,6 +439,7 @@ export class CompetitorAnalysisService {
         'gov.scot',
         'gov',
         'police.uk',
+        'parliament.uk',
       ];
 
       const isExcluded = excludedDomains.some((domain) =>

@@ -3,8 +3,9 @@ import { BriefsService } from './briefs.service';
 import { GenerateBriefDto } from './dto/generate-brief.dto';
 import { Brief } from './schemas/brief.schema';
 import { SeoService } from './seo/seo.service';
-import { AnalyzeKeywordsDto } from './dto/analyze-keywords.dto';
+// import { AnalyzeKeywordsDto } from './dto/analyze-keywords.dto';
 import { CompetitorAnalysisService } from './seo/competitor-analysis.service';
+import { AnalyzeCompetitorsDto } from './dto/analyze-competitors.dto';
 
 @Controller('briefs')
 export class BriefsController {
@@ -15,8 +16,10 @@ export class BriefsController {
   ) {}
 
   @Post()
-  async create(@Body() generateBriefDto: GenerateBriefDto): Promise<Brief> {
-    return this.briefsService.create(generateBriefDto);
+  async generateBrief(
+    @Body() generateBriefDto: GenerateBriefDto,
+  ): Promise<Brief> {
+    return this.briefsService.generateBrief(generateBriefDto);
   }
 
   @Get(':userId')
@@ -30,15 +33,21 @@ export class BriefsController {
   }
 
   @Post('analyze-keywords')
-  async analyzeKeywords(
-    @Body() analyzeKeywordsDto: AnalyzeKeywordsDto,
-  ): Promise<any> {
-    const { content, keyword } = analyzeKeywordsDto; // DTO validates the input
-    return this.seoService.analyzeKeywords(content, keyword);
+  async analyzeKeywords(@Body() selectedAngle: string): Promise<any> {
+    // const { content, keyword } = analyzeKeywordsDto; // DTO validates the input
+    return this.seoService.analyzeKeywords(selectedAngle);
   }
 
   @Post('analyze-competitors')
-  async analyzeCompetitors(@Body('keyword') keyword: string): Promise<any> {
-    return this.competitorAnalysisService.fetchCompetitorData(keyword);
+  async analyzeCompetitors(
+    @Body() analyzeCompetitorsDto: AnalyzeCompetitorsDto,
+  ): Promise<any> {
+    const { focus, topic, goal, tone } = analyzeCompetitorsDto;
+    return this.competitorAnalysisService.fetchCompetitorData(
+      focus,
+      topic,
+      goal,
+      tone,
+    );
   }
 }

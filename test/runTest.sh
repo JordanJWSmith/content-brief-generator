@@ -11,10 +11,10 @@ curl -X POST http://localhost:3000/briefs/analyze-keywords \
 curl -X POST http://localhost:3000/briefs \
   -H 'Content-Type: application/json' \
   -d '{
-        "userId": "user123",
-        "topic": "Tech in UK Politics",
-        "content": "The use of tech in UK politics can be a good driving force for change, but does not come without risks around security, deliverability and scale.",
-        "keyword": "Tech in UK Politics"
+        "topic": "Violence against women and girls",
+        "focus": "Government responses and survivor support",
+        "goal": "Raise awareness about policy changes and the impact on survivors",
+        "tone": "Informative & advocacy-driven",
       }'
 
 
@@ -22,7 +22,10 @@ curl -X POST http://localhost:3000/briefs \
   -H 'Content-Type: application/json' \
   -d '{
         "userId": "user123",
-        "topic": "Violence against women and girls",
-        "content": "Violence against women and girls is an endemic and growing problem in the UK. The scale of it is often masked by treating incidents as one-off acts, or downplayed by treating perpetrators as monsters or spurned lovers.",
-        "keyword": "Violence against women and girls"
+       
       }'
+
+
+curl -X POST http://localhost:3000/briefs \
+     -H "Content-Type: application/json" \
+     -d "@ai-content-brief-generator/test/inputPayload.json"

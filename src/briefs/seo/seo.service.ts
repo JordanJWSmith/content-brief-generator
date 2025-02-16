@@ -10,10 +10,10 @@ export class SeoService {
     this.client = new LanguageServiceClient();
   }
 
-  async analyzeKeywords(content: string, userKeyword: string): Promise<any> {
+  async analyzeKeywords(selectedAngle: string): Promise<any> {
     const [result] = await this.client.analyzeEntities({
       document: {
-        content,
+        content: selectedAngle, // Using the selected content angle as input
         type: 'PLAIN_TEXT',
       },
     });
@@ -27,7 +27,7 @@ export class SeoService {
         salience: parseFloat(entity.salience.toFixed(2)), // Round salience
       }));
 
-    // Ensure the user keyword is included in primary keywords
+    // Ensure the selected angle is included in primary keywords
     let primaryKeywords = keywords.filter((keyword) => keyword.salience > 0.5);
     const secondaryKeywords = keywords.filter(
       (keyword) => keyword.salience <= 0.5,
@@ -38,14 +38,14 @@ export class SeoService {
       (k) => k.name.split(' ').length > 2,
     );
 
-    // Ensure user-provided keyword is included in primary keywords
+    // Ensure the selected angle is included in primary keywords
     if (
       !primaryKeywords.some(
-        (k) => k.name.toLowerCase() === userKeyword.toLowerCase(),
+        (k) => k.name.toLowerCase() === selectedAngle.toLowerCase(),
       )
     ) {
       primaryKeywords.unshift({
-        name: userKeyword,
+        name: selectedAngle,
         type: 'OTHER',
         salience: 1.0,
       });
